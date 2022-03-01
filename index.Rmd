@@ -19,9 +19,9 @@ library(leaflet)
 
 ![](images/TUTORIAL.png)
 
-Nous proposons ici un tutoriel pour permettre aux modélisateurs d'utiliser les outils **ESCAPE** via la plateforme de simulation **ESCAPE** et l'application web "ESCAPE_input_generator". Ce tutoriel est composé de plusieurs étapes (générer les inputs du système, créer l'environnement du système, utiliser des outils **ESCAPE**, réaliser quelques statistiques sur le modèle d'évacuation).
+Nous proposons ici un tutoriel pour permettre aux modélisateurs d'utiliser les outils **ESCAPE** via la plateforme de simulation **GAMA** et l'application web "ESCAPE_input_generator". Ce tutoriel est composé de plusieurs étapes (générer les inputs du système, créer l'environnement du système, utiliser des outils **ESCAPE**, réaliser quelques statistiques sur le modèle d'évacuation).
 
-Ce tutoriel présente donc le développement d'un système simulant de l'évacuation, fictive et peu probable, de la population d'une commune du Genétay lors d'un feuu de forêt.  
+Ce tutoriel présente le développement d'un système simulant de l'évacuation, fictive et peu probable, de la population de la commune du Genétay lors d'un feu de forêt.  
 
 ### ***Génerer les inputs du modèle ***  
 - Se rendre sur [l'application web ESCAPE](https://analytics.huma-num.fr/Olivier.Gillet/escape_inputs_generator/)

@@ -12,6 +12,8 @@ library(knitr)
 library(rmdformats)
 library(kableExtra)
 library(ggplot2)
+library(dplyr)
+library(sf)
 library(leaflet)
 ```
 
@@ -19,12 +21,12 @@ library(leaflet)
 
 Nous proposons ici un tutoriel pour permettre aux modélisateurs d'utiliser les outils **ESCAPE** via la plateforme de simulation **ESCAPE** et l'application web "ESCAPE_input_generator". Ce tutoriel est composé de plusieurs étapes (générer les inputs du système, créer l'environnement du système, utiliser des outils **ESCAPE**, réaliser quelques statistiques sur le modèle d'évacuation).
 
-Ce tutoriel présente donc le développement d'un système simulation (fictif et peu probable) de l'évacuation de la population d'une commune du Genétay lors d'un feuu de forêt.  
+Ce tutoriel présente donc le développement d'un système simulant de l'évacuation, fictive et peu probable, de la population d'une commune du Genétay lors d'un feuu de forêt.  
 
 ### ***Génerer les inputs du modèle ***  
 - Se rendre sur [l'application web ESCAPE](https://analytics.huma-num.fr/Olivier.Gillet/escape_inputs_generator/)
 - Télécharger les données d'intérêt pour votre système (shelter, itinéraire d'évacuation, point de fuite des agents)   
-`r emo::ji("warning")` `r emo::ji("warning")` `r emo::ji("warning")`  Quelques soient les données à télécharger, vous de le shapefile de votre zone d'étude. Il est nécessaire d'obtenir l'extension spatiale de la zone d'étude pour télécharger les données [OpenStreetMap](https://www.openstreetmap.org). Vous pouvez retrouver ces coordonnées (Xmin, Xmax, Ymin, Xmin, EPSG::4326) en bas de la page web après création du polygone de la zone d'étude.  
+`r emo::ji("warning")` `r emo::ji("warning")` `r emo::ji("warning")`  Quelques soient les données à télécharger, vous devez créer le shapefile de votre zone d'étude car il est nécessaire pour obtenir l'extension spatiale de la zone d'étude afin de télécharger les données [OpenStreetMap](https://www.openstreetmap.org). Vous pouvez retrouver ces coordonnées (Xmin, Xmax, Ymin, Xmin, EPSG::4326) en bas de la page web après création du polygone de la zone d'étude.  
 
 ![](images/DOWNLOAD_INPUTS.png)
 - Vous pouvez par la suite télécharger vos données. Vous trouverez une archive composée de plusieurs shapefiles et d'un csv d'organisation des transports en commun.
@@ -44,6 +46,52 @@ Au total, vous devez créer trois fichiers *.gaml* pour exécuter votre modèle 
 2 - Un fichier pour calculer la matrice des plus courts chemins  
 3 - Un fichier contenant le script principal du modèle d'évacuation   
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+addLegendCustom <- function(map, colors, labels, sizes, opacity = 0.5){
+  colorAdditions <- paste0(colors, "; width:", sizes, "px; height:", sizes, "px")
+  labelAdditions <- paste0("<div style='display: inline-block;height: ", sizes, "px;margin-top: 4px;line-height: ", sizes, "px;'>", labels, "</div>")
+  return(addLegend(map, colors = colorAdditions, labels = labelAdditions, opacity = opacity))
+}
+ze <- sf::st_read("shp/evac_area.shp", quiet = T)
+pf <- sf::st_read("shp/shelter.shp", quiet = T)
+fire <- sf::st_read("shp/hazard.shp", quiet = T)
+road <- sf::st_read("shp/roads.shp", quiet = T) %>% st_zm()
+buildings <- sf::st_read("shp/buildings.shp", quiet = T) %>% st_zm()
+# road <- as.data.frame(st_coordinates(sf::st_read("shp/roads.shp")))
+bounds <- ze %>% 
+        st_bbox() %>% 
+        as.character()
+map <- leaflet() %>%
+  fitBounds(bounds[1], bounds[2], bounds[3], bounds[4]) %>% 
+  addProviderTiles("Esri.WorldImagery") %>% 
+  addPolylines(data = road,
+               weight = 2,
+               color = "gray",
+               opacity = 1, 
+               group = "Roads (OSM)") %>%
+  addCircles(data = pf,
+             color = "Blue",
+             fill = "Blue",
+             opacity = 1, 
+             group = "Shelter (ESCAPE)")  %>%
+  addPolygons(data=fire,
+             color = "red",
+             fill = "red",
+             opacity = 0.5, 
+             group = "Fire (USER)") %>%
+  addPolygons(data=buildings,
+             color = "white",
+             fill = "white",
+             weight = 2,
+             group = "buildings (OSM)") %>% 
+  addLayersControl(
+    overlayGroups = c("Shelter (ESCAPE)", "Fire (USER)","Roads (OSM)", "buildings (OSM)"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+
+map
+```
+
 ### ***Importer les résultats dans l'application***   
-Vous devez uploader dans l'onglet *output* le fichier *oputs_SHP_ESCAPE.txt* créer par le script **GAMA**.  
+Vous devez uploader dans l'onglet *output* le fichier *oputs_SHP_ESCAPE.txt*.    
 ![](images/RESULTS.png) 

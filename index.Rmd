@@ -29,6 +29,7 @@ Ce tutoriel présente le développement d'un système simulant de l'évacuation,
 `r emo::ji("warning")` `r emo::ji("warning")` `r emo::ji("warning")`  Quelques soient les données à télécharger, vous devez créer le shapefile de votre zone d'étude car il est nécessaire pour obtenir l'extension spatiale de la zone d'étude afin de télécharger les données [OpenStreetMap](https://www.openstreetmap.org). Vous pouvez retrouver ces coordonnées (Xmin, Xmax, Ymin, Xmin, EPSG::4326) en bas de la page web après création du polygone de la zone d'étude.  
 
 ![](images/DOWNLOAD_INPUTS.png)
+
 - Vous pouvez par la suite télécharger vos données. Vous trouverez une archive composée de plusieurs *.shp* et d'un *.csv* d'organisation des transports en commun.
 
 ![](images/ARCHIVE.png)

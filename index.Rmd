@@ -38,7 +38,7 @@ Ce tutoriel présente le développement d'un système simulant de l'évacuation,
 
 - Ensuite, vous devez vous rendre sur le site web d'OpenStreetMap [OpenStreetMap](https://www.openstreetmap.org)  
 - Renseigner les coordonnées obtenues précédemment (Xmin, Xmax, Ymin, Xmin, EPSG::4326) et télécharger les données [OpenStreetMap](https://www.openstreetmap.org) (routes et bâtiments).Vous obtenez un fichier au format .osm à utiliser via les outils **ESCAPE** pour générer l'environnement.
-- Les données téléchargées, [OpenStreetMap](https://www.openstreetmap.org) comme les données **ESCAPE** sont à extraire dans le répertoire *include* `r emo::ji("file_folder")`  de votre projet **ESCAPE**.
+- Les données téléchargées, [OpenStreetMap](https://www.openstreetmap.org) comme **ESCAPE**, sont à extraire dans le répertoire *include* `r emo::ji("file_folder")`  de votre projet **ESCAPE**.
 
 ![](images/OSM.png)  
 

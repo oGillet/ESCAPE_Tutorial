@@ -30,7 +30,7 @@ Ce tutoriel présente le développement d'un système simulant de l'évacuation,
 
 ![](images/DOWNLOAD_INPUTS.png)
 
-- Vous pouvez par la suite télécharger vos données. Vous trouverez une archive composée de plusieurs *.shp* et d'un *.csv* d'organisation des transports en commun.
+- Vous pouvez par la suite télécharger vos données. Vous trouverez une archive composée de plusieurs shapefiles *.shp* et d'un  fichier text *.csv* d'organisation des transports en commun.
 
 ![](images/ARCHIVE.png)
 

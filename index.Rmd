@@ -93,8 +93,8 @@ Vous devez uploader dans l'onglet *output* les divers shapefiles :
 - roads_traffic.shp
 
 `r emoji::emoji("warning")` Il n'est pas nécessaire d'archiver les données avant l'upload.
-Vous pouvez télécharger les résultats pour ce modèle d'évacuation aux adresses suivantes :
-- [Github](https://github.com/oGillet/ESCAPE_Tutorial/tree/main/shp)
-- [Google](https://drive.google.com/drive/folders/1NvSb2cKYliLWKZnoFkkAFzGmlRIVmzj7?usp=sharing)
+Vous pouvez télécharger les résultats pour ce modèle d'évacuation aux adresses suivantes :  
+- [Github](https://github.com/oGillet/ESCAPE_Tutorial/tree/main/shp)  
+- [Google](https://drive.google.com/drive/folders/1NvSb2cKYliLWKZnoFkkAFzGmlRIVmzj7?usp=sharing)  
 
 ![](images/RESULTS.png) 

@@ -23,76 +23,77 @@ Nous proposons ici un tutoriel pour permettre aux modélisateurs d'utiliser les 
 
 Ce tutoriel présente le développement d'un système simulant de l'évacuation, fictive et peu probable, de la population de la commune du Genétay lors d'un feu de forêt.  
 
+## **Créer un projet GAMA ESCAPE**
 ### ***Génerer les inputs du modèle ***  
-- Se rendre sur [l'application web ESCAPE](https://analytics.huma-num.fr/Olivier.Gillet/escape_inputs_generator/)
-- Télécharger les données d'intérêt pour votre système (shelter, itinéraire d'évacuation, point de fuite des agents)   
-`r emo::ji("warning")` `r emo::ji("warning")` `r emo::ji("warning")`  Quelques soient les données à télécharger, vous devez créer le shapefile de votre zone d'étude car il est nécessaire pour obtenir l'extension spatiale de la zone d'étude afin de télécharger les données [OpenStreetMap](https://www.openstreetmap.org). Vous pouvez retrouver ces coordonnées (Xmin, Xmax, Ymin, Xmin, EPSG::4326) en bas de la page web après création du polygone de la zone d'étude.  
+(1) Se rendre sur [l'application web ESCAPE](https://analytics.huma-num.fr/Olivier.Gillet/escape_inputs_generator/)
+(2) Télécharger les données d'intérêt pour votre système :  
+  - Study area
+  - Evacuation points
+  - Assembly points
+  - Departure point for buses
+  - Escape road
+  - Avoid road
+  - Siren(s)
+  - Mobile siren(s)   
+ 
+`r emoji::emoji("warning")` `r emoji::emoji("warning")` `r emoji::emoji("warning")`  Quelques soient les données à télécharger, vous devez créer le shapefile de votre zone d'étude car il est nécessaire pour obtenir l'extension spatiale de la zone d'étude afin de télécharger les données [OpenStreetMap](https://www.openstreetmap.org). Vous pouvez retrouver ces coordonnées (Xmin, Xmax, Ymin, Xmin, EPSG::4326) en bas de la page web après création du polygone de la zone d'étude.  
+
+***  
+
+**Bounding box de notre zone d'étude**   
+*Xmin ==> 0.940790176391602*  
+*Xmmax ==> 0.996665954589844*  
+*Ymin ==> 49.4153288319765*  
+*Ymax ==> 49.4536194132892*  
+
+***  
+
+La procédure de création est simple, choisir la donnée dans le menu déroulant, activer le mode édition puis cliquer sur la carte. Les polygones ou les lignes, telles que Escape road ou Study area, nécessitent au minimum deux ou trois points sur la carte. Vous devez valider la géométrie pour générer votre entité.
 
 ![](images/DOWNLOAD_INPUTS.png)
 
-- Vous pouvez par la suite télécharger vos données. Vous trouverez une archive composée de plusieurs shapefiles *.shp* et d'un  fichier text *.csv* d'organisation des transports en commun.
+- Vous pouvez par la suite télécharger vos données. Vous trouverez une archive composée de plusieurs shapefiles *.shp* et d'un  fichier text *.csv* d'organisation des transports en commun. Cette archive est à extraire dans le répertoire *include* `r emoji::emoji("file_folder")` de votre projet GAMA **ESCAPE**.
 
 ![](images/ARCHIVE.png)
+
+Pour ce tutoriel, nous avons exporté:  
+
+- *standard_evac_points.shp*, point de fuite des agents véhiculés  
+- *sirens-point.shp*, localisation des sirènes fixes  
+- *shelter.shp*, fichier avec les points de rassemblement et les abris  
+- *roads_evac.shp*, itinéraire d'évacuation  
+- *evac_bus_stop.shp*, localisation des arrêts de bus  
+- *evac_area.shp*, zone d'étude  
+- *evacuation_bus_file_map.csv*, fichier pour la gestion des norias  
 
 ### ***Créer l'environnement du système ***  
 
 - Ensuite, vous devez vous rendre sur le site web d'OpenStreetMap [OpenStreetMap](https://www.openstreetmap.org)  
-- Renseigner les coordonnées obtenues précédemment (Xmin, Xmax, Ymin, Xmin, EPSG::4326) et télécharger les données [OpenStreetMap](https://www.openstreetmap.org) (routes et bâtiments).Vous obtenez un fichier au format .osm à utiliser via les outils **ESCAPE** pour générer l'environnement.
-- Les données téléchargées, [OpenStreetMap](https://www.openstreetmap.org) comme **ESCAPE**, sont à extraire dans le répertoire *include* `r emo::ji("file_folder")`  de votre projet **ESCAPE**.
+- Renseigner les coordonnées obtenues précédemment (Xmin, Xmax, Ymin, Xmin, EPSG::4326) et télécharger les données [OpenStreetMap](https://www.openstreetmap.org) (routes et bâtiments).Vous obtenez un fichier au format .osm et est à utiliser via les outils **ESCAPE** pour générer l'environnement.
+- Les données téléchargées, [OpenStreetMap](https://www.openstreetmap.org) comme pour les données **ESCAPE**, sont à extraire dans le répertoire *include* `r emoji::emoji("file_folder")` de votre projet GAMA **ESCAPE**.
 
 ![](images/OSM.png)  
+Au total, vous devez créer trois fichiers *.gaml* pour exécuter votre modèle dont deux pour créer l'environnement d’exécution du système:  (1) Le premier script *.gaml*  a pour objectif de créer votre environnement à partir du *xml* d'[OpenStreetMap](https://www.openstreetmap.org). (2) Le second script obligatoire sert à calculer la calculer la matrice des plus courts chemins. (3) Le troisième script  est le script principal de votre modèle d'évacuation. La définition et l’exécution du modèle se fait dans ce troisième script.
 
-Au total, vous devez créer trois fichiers *.gaml* pour exécuter votre modèle dont deux pour créer l'environnement d'éxecution du système.  
-1 - Un fichier pour créer votre environnement à partir du *xml* d'[OpenStreetMap](https://www.openstreetmap.org)   
-2 - Un fichier pour calculer la matrice des plus courts chemins  
-3 - Un fichier contenant le script principal du modèle d'évacuation   
+`r emoji::emoji("mega")`Vous trouverez davantage d'informations sur la page web dédiée à l'import des données OSM sur le de [*GAMA*](https://gama-platform.org/wiki/ManipulateOSMDatas)
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-addLegendCustom <- function(map, colors, labels, sizes, opacity = 0.5){
-  colorAdditions <- paste0(colors, "; width:", sizes, "px; height:", sizes, "px")
-  labelAdditions <- paste0("<div style='display: inline-block;height: ", sizes, "px;margin-top: 4px;line-height: ", sizes, "px;'>", labels, "</div>")
-  return(addLegend(map, colors = colorAdditions, labels = labelAdditions, opacity = opacity))
-}
-ze <- sf::st_read("shp/evac_area.shp", quiet = T)
-pf <- sf::st_read("shp/shelter.shp", quiet = T)
-fire <- sf::st_read("shp/hazard.shp", quiet = T)
-road <- sf::st_read("shp/roads.shp", quiet = T) %>% st_zm()
-buildings <- sf::st_read("shp/buildings.shp", quiet = T) %>% st_zm()
-# road <- as.data.frame(st_coordinates(sf::st_read("shp/roads.shp")))
-bounds <- ze %>% 
-        st_bbox() %>% 
-        as.character()
-map <- leaflet() %>%
-  fitBounds(bounds[1], bounds[2], bounds[3], bounds[4]) %>% 
-  addProviderTiles("Esri.WorldImagery") %>% 
-  addPolylines(data = road,
-               weight = 2,
-               color = "gray",
-               opacity = 1, 
-               group = "Roads (OSM)") %>%
-  addCircles(data = pf,
-             color = "Blue",
-             fill = "Blue",
-             opacity = 1, 
-             group = "Shelter (ESCAPE)")  %>%
-  addPolygons(data=fire,
-             color = "red",
-             fill = "red",
-             opacity = 0.5, 
-             group = "Fire (USER)") %>%
-  addPolygons(data=buildings,
-             color = "white",
-             fill = "white",
-             weight = 2,
-             group = "buildings (OSM)") %>% 
-  addLayersControl(
-    overlayGroups = c("Shelter (ESCAPE)", "Fire (USER)","Roads (OSM)", "buildings (OSM)"),
-    options = layersControlOptions(collapsed = FALSE)
-  )
+![](images/GAMA_1.png)  
 
-map
-```
+### ***Exécuter le modèle ***  
 
+![](images/MODEL.gif) 
+
+## **Explorer les sorties du modèle**
 ### ***Importer les résultats dans l'application***   
-Vous devez uploader dans l'onglet *output* le fichier *oputs_SHP_ESCAPE.txt*.    
+Vous devez uploader dans l'onglet *output* les divers shapefiles :  
+
+
+- car_evacuation_time.shp
+- people_evacuation_time.shp
+- roads_traffic.shp
+
+`r emoji::emoji("warning")` Il n'est pas nécessaire d'archiver les données avant l'upload.
+Vous pouvez télécharger les résultats pour ce modèle d'évacuation à l'adresse suivante :
+
+
 ![](images/RESULTS.png) 
